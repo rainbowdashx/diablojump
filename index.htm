@@ -169,8 +169,11 @@
     function draw() {
         ctx = document.getElementById('main').getContext('2d');
         //ctx.fillStyle = "#08F";
-        ctx.drawImage(imgBackground, 0, 0, 1024, 768);
         ctx.fillRect(0, 0, SCREEN_W, SCREEN_H);
+
+        ctx.translate(0, 0);
+        ctx.drawImage(imgBackground, 0, 0, 1024, 768);
+        
 
 
         clouds.forEach(function (cloud) {
