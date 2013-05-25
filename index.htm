@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Diablo Jump</title>
+
+    <style>
+        #main {
+            width: 1024px;
+            height: 768px;
+        }
+    </style>
+    <script src="js/jquery.js"></script>
+    <script src="js/vector2.js"></script>
+    <script src="js/entity.js"></script>
+    <script src="js/obj.js"></script>
+
+
+</head>
+<body>
+
+    <canvas id="main" width="1024" height="768"></canvas>
+
+
+</body>
+
+
+<script>
+
+    var imgDiablo = new Image();
+    imgDiablo.src = 'img/diablo.png';
+
+    var imgWolke = new Image();
+    imgWolke.src = 'img/wolke_norm.png';
+
+    var ctx;
+    var SCREEN_W = 1024,
+        SCREEN_H = 768;
+    var CAMx = 0,
+        CAMy = 21000;
+    var MX = 0,
+        MY = 0;
+    var players = {};
+    var player = new Player(20, 20000);
+
+    var clouds = [];
+    for (var i = 0 ; i < 20; i++) {
+        clouds.push(new Cloud(getRnd(0, 1024), getRnd(19000, 20000)));
+    }
+
+    for (var i = 0 ; i < 5; i++) {
+        clouds.push(new Cloud(128 * i, 20250));
+    }
+
+
+    var Key = {
+        _pressed: {},
+
+        LEFT: 37,
+        UP: 38,
+        RIGHT: 39,
+        DOWN: 40,
+        CTRL: 17,
+        SHIFT: 16,
+
+        isDown: function (keyCode) {
+            return this._pressed[keyCode];
+        },
+
+        onKeydown: function (event) {
+            this._pressed[event.keyCode] = true;
+        },
+
+        onKeyup: function (event) {
+            delete this._pressed[event.keyCode];
+        }
+    };
+
+
+    window.requestAnimFrame = (function () {
+        return window.requestAnimationFrame ||
+            window.webkitRequestAnimationFrame ||
+            window.mozRequestAnimationFrame ||
+            window.oRequestAnimationFrame ||
+            window.msRequestAnimationFrame ||
+            function (/* function */ callback, /* DOMElement */ element) {
+                window.setTimeout(callback, 1000 / 60);
+            };
+    })();
+
+    $(function () {
+        $(this).bind("contextmenu", function (e) {
+            e.preventDefault();
+        });
+    });
+
+    var canvas = document.getElementById("main");
+    window.addEventListener('keyup', function (event) { Key.onKeyup(event); }, false);
+    window.addEventListener('keydown', function (event) { Key.onKeydown(event); }, false);
+    canvas.addEventListener("mousedown", getPosition, false);
+
+    function getPosition(event) {
+        var x = 0;
+        var y = 0;
+        var canvas = document.getElementById("main");
+
+        if (event.x != undefined && event.y != undefined) {
+            x = event.x;
+            y = event.y;
+        }
+        else // Firefox method to get the position
+        {
+            x = event.clientX + document.body.scrollLeft +
+                document.documentElement.scrollLeft;
+            y = event.clientY + document.body.scrollTop +
+                document.documentElement.scrollTop;
+        }
+
+        x -= canvas.offsetLeft;
+        y -= canvas.offsetTop;
+        MX = x;
+        MY = y;
+    }
+
+    function recsOverlap(x1, y1, w1, h1, x2, y2, w2, h2) {
+
+        if ((x1 > (x2 + w2)) || (x1 + w1) < x2)
+            return false;
+        if ((y1 > (y2 + h2)) || (y1 + h1) < y2)
+            return false;
+
+        return true;
+    }
+
+
+    function getRnd(min, max) {
+        r = Math.random();
+        return min + parseInt(r * (max - min + 1));
+    }
+
+
+
+</script>
+
+<script>
+
+
+
+    update();
+
+    function update() {
+
+        player.update();
+
+
+        clouds = clouds.filter(function (cloud) {
+            return cloud.active;
+        });
+
+        draw();
+        requestAnimFrame(update);
+    };
+
+    function draw() {
+        ctx = document.getElementById('main').getContext('2d');
+        ctx.fillStyle = "#000";
+        ctx.fillRect(0, 0, SCREEN_W, SCREEN_H);
+
+
+        clouds.forEach(function (cloud) {
+            cloud.update();
+            cloud.draw(CAMx, CAMy);
+        });
+
+        player.draw(CAMx, CAMy);
+    };
+
+</script>
+
+</html>
