@@ -8,12 +8,17 @@
         #main {
             width: 1024px;
             height: 768px;
+            image-rendering: optimizeSpeed;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: -webkit-optimize-contrast;
         }
     </style>
     <script src="js/jquery.js"></script>
     <script src="js/vector2.js"></script>
+    <script src="js/sprite.js"></script>
     <script src="js/entity.js"></script>
     <script src="js/obj.js"></script>
+
 
 
 </head>
@@ -22,171 +27,208 @@
     <canvas id="main" width="1024" height="768"></canvas>
 
 
-</body>
 
 
-<script>
 
-    var imgDiablo = new Image();
-    imgDiablo.src = 'img/diablo.png';
+    <script>
 
-    var imgWolke = new Image();
-    imgWolke.src = 'img/wolke_norm.png';
+        var imgDiablo = new Image();
+        imgDiablo.src = 'img/diablo.png';
+       
+        var imgWolke = new Image();
+        imgWolke.src = 'img/wolke_norm.png';
 
+        var imgBackground = new Image();
+        imgBackground.src = 'img/background.png';
 
-    var imgBackground = new Image();
-    imgBackground.src = 'img/background.png';
+        var imgAngel = new Image();
+        imgAngel.src = 'img/engel.png';
 
-    var ctx;
-    var SCREEN_W = 1024,
-        SCREEN_H = 768;
-    var CAMx = 0,
-        CAMy = 21000;
-    var MX = 0,
-        MY = 0;
-    var nextSegment = 19400;
-    var players = {};
-    var player = new Player(20, 20000);
+        //(img, pos, size, speed, frames, dir, once)
+        //var lolz = new Sprite(imgWolke, [0, 0], [32, 32],
+          //                    2, [0, 1, 2, 3, 2, 1])
 
-    var clouds = [];
-    /*for (var i = 0 ; i < 20; i++) {
-        clouds.push(new Cloud(getRnd(0, 1024), getRnd(19000, 20000), 0));
-    }*/
-    for (var i = 0 ; i < 5; i++) {
-        clouds.push(new Cloud(128 * i, 20250, 1));
-        clouds.push(new Cloud(1024 - (128 * i), 20050, 1));
-        clouds.push(new Cloud(128 * i, 19850, 1));
-        clouds.push(new Cloud(1024 - (128 * i), 19650, 1));
-        clouds.push(new Cloud(128 * i, 19450, 1));
-    }
+        var nextSpawn = $.now() + 10000;
+        var ctx;
+        var SCREEN_W = 1024,
+            SCREEN_H = 768;
+        var CAMx = 0,
+            CAMy = 21000;
+        var MX = 0,
+            MY = 0;
+        var lastTime = $.now();
+        var dt = 0;
+        var nextSegment = 19400;
+        var players = {};
+        var player = new Player(20, 20000);
+        var angels = [];
+        angels.push(new Angel(20, 19800, 5));
+        angels.push(new Angel(1000, 19800, -5));
 
-
-    var Key = {
-        _pressed: {},
-
-        LEFT: 37,
-        UP: 38,
-        RIGHT: 39,
-        DOWN: 40,
-        CTRL: 17,
-        SHIFT: 16,
-
-        isDown: function (keyCode) {
-            return this._pressed[keyCode];
-        },
-
-        onKeydown: function (event) {
-            this._pressed[event.keyCode] = true;
-        },
-
-        onKeyup: function (event) {
-            delete this._pressed[event.keyCode];
+        var clouds = [];
+        /*for (var i = 0 ; i < 20; i++) {
+            clouds.push(new Cloud(getRnd(0, 1024), getRnd(19000, 20000), 0));
+        }*/
+        for (var i = 0 ; i < 5; i++) {
+            clouds.push(new Cloud(128 * i, 20250, 1));
+            clouds.push(new Cloud(1024 - (128 * i), 20050, 1));
+            clouds.push(new Cloud(128 * i, 19850, 1));
+            clouds.push(new Cloud(1024 - (128 * i), 19650, 1));
+            clouds.push(new Cloud(128 * i, 19450, 1));
         }
-    };
 
 
-    window.requestAnimFrame = (function () {
-        return window.requestAnimationFrame ||
-            window.webkitRequestAnimationFrame ||
-            window.mozRequestAnimationFrame ||
-            window.oRequestAnimationFrame ||
-            window.msRequestAnimationFrame ||
-            function (/* function */ callback, /* DOMElement */ element) {
-                window.setTimeout(callback, 1000 / 60);
-            };
-    })();
 
-    $(function () {
-        $(this).bind("contextmenu", function (e) {
-            e.preventDefault();
+        var Key = {
+            _pressed: {},
+
+            LEFT: 37,
+            UP: 38,
+            RIGHT: 39,
+            DOWN: 40,
+            CTRL: 17,
+            SHIFT: 16,
+
+            isDown: function (keyCode) {
+                return this._pressed[keyCode];
+            },
+
+            onKeydown: function (event) {
+                this._pressed[event.keyCode] = true;
+            },
+
+            onKeyup: function (event) {
+                delete this._pressed[event.keyCode];
+            }
+        };
+
+
+        window.requestAnimFrame = (function () {
+            return window.requestAnimationFrame ||
+                window.webkitRequestAnimationFrame ||
+                window.mozRequestAnimationFrame ||
+                window.oRequestAnimationFrame ||
+                window.msRequestAnimationFrame ||
+                function (/* function */ callback, /* DOMElement */ element) {
+                    window.setTimeout(callback, 1000 / 60);
+                };
+        })();
+
+        $(function () {
+            $(this).bind("contextmenu", function (e) {
+                e.preventDefault();
+            });
         });
-    });
 
-    var canvas = document.getElementById("main");
-    window.addEventListener('keyup', function (event) { Key.onKeyup(event); }, false);
-    window.addEventListener('keydown', function (event) { Key.onKeydown(event); }, false);
-    canvas.addEventListener("mousedown", getPosition, false);
-
-    function getPosition(event) {
-        var x = 0;
-        var y = 0;
         var canvas = document.getElementById("main");
+        window.addEventListener('keyup', function (event) { Key.onKeyup(event); }, false);
+        window.addEventListener('keydown', function (event) { Key.onKeydown(event); }, false);
+        canvas.addEventListener("mousedown", getPosition, false);
 
-        if (event.x != undefined && event.y != undefined) {
-            x = event.x;
-            y = event.y;
+        function getPosition(event) {
+            var x = 0;
+            var y = 0;
+            var canvas = document.getElementById("main");
+
+            if (event.x != undefined && event.y != undefined) {
+                x = event.x;
+                y = event.y;
+            }
+            else // Firefox method to get the position
+            {
+                x = event.clientX + document.body.scrollLeft +
+                    document.documentElement.scrollLeft;
+                y = event.clientY + document.body.scrollTop +
+                    document.documentElement.scrollTop;
+            }
+
+            x -= canvas.offsetLeft;
+            y -= canvas.offsetTop;
+            MX = x;
+            MY = y;
         }
-        else // Firefox method to get the position
-        {
-            x = event.clientX + document.body.scrollLeft +
-                document.documentElement.scrollLeft;
-            y = event.clientY + document.body.scrollTop +
-                document.documentElement.scrollTop;
+
+        function recsOverlap(x1, y1, w1, h1, x2, y2, w2, h2) {
+
+            if ((x1 > (x2 + w2)) || (x1 + w1) < x2)
+                return false;
+            if ((y1 > (y2 + h2)) || (y1 + h1) < y2)
+                return false;
+
+            return true;
         }
 
-        x -= canvas.offsetLeft;
-        y -= canvas.offsetTop;
-        MX = x;
-        MY = y;
-    }
 
-    function recsOverlap(x1, y1, w1, h1, x2, y2, w2, h2) {
-
-        if ((x1 > (x2 + w2)) || (x1 + w1) < x2)
-            return false;
-        if ((y1 > (y2 + h2)) || (y1 + h1) < y2)
-            return false;
-
-        return true;
-    }
-
-
-    function getRnd(min, max) {
-        r = Math.random();
-        return min + parseInt(r * (max - min + 1));
-    }
+        function getRnd(min, max) {
+            r = Math.random();
+            return min + parseInt(r * (max - min + 1));
+        }
 
 
 
-</script>
+    </script>
 
-<script>
-
-
-
-    update();
-
-    function update() {
-
-        player.update();
+    <script>
 
 
-        clouds = clouds.filter(function (cloud) {
-            return cloud.active;
-        });
 
-        draw();
-        requestAnimFrame(update);
-    };
+        update();
 
-    function draw() {
-        ctx = document.getElementById('main').getContext('2d');
-        //ctx.fillStyle = "#08F";
-        ctx.fillRect(0, 0, SCREEN_W, SCREEN_H);
+        function update() {
 
-        ctx.translate(0, 0);
-        ctx.drawImage(imgBackground, 0, 0, 1024, 768);
-        
+            var now = $.now();
+
+            dt = (now - lastTime) / 1000.0;
+
+            player.update();
 
 
-        clouds.forEach(function (cloud) {
-            cloud.update();
-            cloud.draw(CAMx, CAMy);
-        });
+            clouds = clouds.filter(function (cloud) {
+                return cloud.active;
+            });
 
-        player.draw(CAMx, CAMy);
-    };
 
-</script>
+            angels = angels.filter(function (angel) {
+                return angel.active;
+            });
 
+            if (nextSpawn < $.now()) {
+                var Y = getRnd(0, 500);
+                var temp = getRnd(0, 1);
+                temp == 1 ?
+                angels.push(new Angel(0, CAMy + Y, 5)) :
+                angels.push(new Angel(1050, CAMy + Y, -5));
+                nextSpawn = $.now() + getRnd(5000, 15000);
+            }
+
+            draw();
+            requestAnimFrame(update);
+
+            lastTime = now;
+        };
+
+        function draw() {
+
+            ctx = document.getElementById('main').getContext('2d');
+            ctx.fillStyle = "#08F";
+            ctx.fillRect(0, 0, SCREEN_W, SCREEN_H);
+
+            ctx.translate(0, 0);
+            ctx.drawImage(imgBackground, 0, 0, 1024, 768);
+
+            clouds.forEach(function (cloud) {
+                cloud.update();
+                cloud.draw(CAMx, CAMy);
+            });
+
+            angels.forEach(function (angel) {
+                angel.update();
+                angel.draw(CAMx, CAMy);
+            });
+
+            player.draw(CAMx, CAMy);
+        };
+
+    </script>
+</body>
 </html>

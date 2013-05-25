@@ -11,6 +11,7 @@ function Entity(x, y) {
     this.jump = true;
     this.image = false;
     this.active = true;
+    this.anim = [];
 
 }
 
@@ -26,8 +27,9 @@ Entity.prototype.draw = function (offx, offy) {
         ctx.fillRect(-this.width / 2, -this.height / 2, this.width, this.height);
     } else {
         ctx.drawImage(this.image, 0, 0, this.image.width, this.image.height);
-
     }
+
+    
     ctx.restore();
 };
 
@@ -37,6 +39,9 @@ function Player(x, y) {
 
     Entity.call(this, x, y);
     this.image = imgDiablo;
+    this.glide = false;
+    this.width = 128;
+    this.height = 128;
 
 }
 Player.prototype = new Entity();
@@ -46,8 +51,11 @@ Player.prototype.constructor = Player;
 Player.prototype.update = function () {
     this.color = "#0F0";
 
-    this.gravity -= 0.1;
-
+    if (this.glide && this.gravity < -1) {
+        this.gravity -= -1 ;
+    } else {
+        this.gravity -= 0.1;
+    }
 
     /* if (this.position.y - CAMy > 768) {
          this.jump = false;
@@ -62,10 +70,10 @@ Player.prototype.update = function () {
     }
 
     for (var i in clouds) {
-        if (this.gravity < 0 && recsOverlap(this.position.x, this.position.y, this.image.width, this.image.height,
-            clouds[i].position.x, clouds[i].position.y, clouds[i].image.width, clouds[i].image.height)) {
-            if (this.position.y + (this.image.height - 32) < clouds[i].position.y) {
-                this.position = new Vec2(this.position.x, clouds[i].position.y - this.image.height);
+        if (this.gravity < 0 && recsOverlap(this.position.x, this.position.y, this.width, this.height,
+            clouds[i].position.x, clouds[i].position.y, clouds[i].width, clouds[i].height)) {
+            if (this.position.y + (this.height - 32) < clouds[i].position.y) {
+                this.position = new Vec2(this.position.x, clouds[i].position.y - this.height);
                 this.gravity = 0;
                 this.jump = false;
             }
@@ -87,6 +95,14 @@ Player.prototype.update = function () {
     if (Key.isDown(Key.RIGHT)) {
         this.position = new Vec2(this.position.x + 5, this.position.y);
     }
+
+    if (Key.isDown(Key.SHIFT)) {
+        this.glide = true;
+    } else {
+        this.glide = false;
+    }
+
+
 
     if (CAMy < nextSegment) {
 
@@ -137,7 +153,7 @@ Player.prototype.update = function () {
                 }
                 nextSegment -= 12 * 128;
                 break;
-            case 6:
+            case 6://HELIX 
                 for (var j = 0; j < 2; j++) {
                     for (var i = 0; i < 12; i++) {
                         j == 0 ? clouds.push(new Cloud(128 + (128 * (Math.sin(i / 0.01))), nextSegment - (i * 128), 1))
@@ -146,7 +162,7 @@ Player.prototype.update = function () {
                 }
                 nextSegment -= 12 * 128;
                 break;
-            case 7:
+            case 7: //HELIX MIRROR
                 for (var j = 0; j < 2; j++) {
                     for (var i = 0; i < 12; i++) {
                         j == 0 ? clouds.push(new Cloud(128 + (128 * (Math.cos(i / 0.01))), nextSegment - (i * 128), 1))
@@ -155,7 +171,7 @@ Player.prototype.update = function () {
                 }
                 nextSegment -= 12 * 128;
                 break;
-            case 8:
+            case 8: //SCATTER
                 for (var i = 0; i < 12; i++) {
                     var temp = getRnd(200, 800);
                     clouds.push(new Cloud(temp + (128 * (Math.sin(i / 0.01))), nextSegment - (i * 128), 1));
