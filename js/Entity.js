@@ -88,22 +88,34 @@ Player.prototype.update = function () {
         this.position = new Vec2(this.position.x + 5, this.position.y);
     }
 
-    if (this.position.y < nextSegment) {
+    if (CAMy < nextSegment) {
 
-        nextSegment -= 768;
-        var style = getRnd(0, 100);
-        if (style < 50) {
-            for (var i = 0; i < 10; i++) {
-                clouds.push(new Cloud(128 * i, nextSegment, 1));
-            }
-        } else {
-            for (var i = 0; i < 2; i++) {
-                for (var j = 0; j < 5; j++) {
-
-                    clouds.push(new Cloud(128 * (i * 5), nextSegment - (j*100), 1));
+        var style = getRnd(0, 2);
+        switch (style) {
+            case 0:
+                for (var i = 0; i < 8; i++) {
+                    var temp = getRnd(0, 1);
+                    temp == 1 ? clouds.push(new Cloud(128, nextSegment - (i * 150), 1)) : clouds.push(new Cloud(1024 - 256, nextSegment - (i * 150), 1));
+                    //                    clouds.push(new Cloud(128 * i, nextSegment - (i * 150), 1));
                 }
-            }
+                nextSegment -= 8 * 150;
+                break;
+            case 1:
+                for (var i = 0; i < 2; i++) {
+                    for (var j = 0; j < 5; j++) {
+                        clouds.push(new Cloud(128 * (i * 5), nextSegment - (j * 100), 1));
+                    }
+                }
+                nextSegment -= 5 * 100;
+                break;
+            case 2:
+                for (var i = 0; i < 6; i++) {
+                    clouds.push(new Cloud(128 * i, nextSegment - (i * 128), 1));
+                }
+                nextSegment -= 6 * 128;
+                break;
         }
+
     }
 
 };

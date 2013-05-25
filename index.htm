@@ -44,17 +44,20 @@
         CAMy = 21000;
     var MX = 0,
         MY = 0;
-    var nextSegment = 20000 - 768;
+    var nextSegment = 19400;
     var players = {};
     var player = new Player(20, 20000);
 
     var clouds = [];
-    for (var i = 0 ; i < 20; i++) {
+    /*for (var i = 0 ; i < 20; i++) {
         clouds.push(new Cloud(getRnd(0, 1024), getRnd(19000, 20000), 0));
-    }
-
+    }*/
     for (var i = 0 ; i < 5; i++) {
         clouds.push(new Cloud(128 * i, 20250, 1));
+        clouds.push(new Cloud(1024 - (128 * i), 20050, 1));
+        clouds.push(new Cloud(128 * i, 19850, 1));
+        clouds.push(new Cloud(1024 - (128 * i), 19650, 1));
+        clouds.push(new Cloud(128 * i, 19450, 1));
     }
 
 
