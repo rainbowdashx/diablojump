@@ -90,9 +90,9 @@ Player.prototype.update = function () {
 
     if (CAMy < nextSegment) {
 
-        var style = getRnd(0, 2);
+        var style = getRnd(0, 8);
         switch (style) {
-            case 0:
+            case 0: // RANDOM COLUMNS
                 for (var i = 0; i < 8; i++) {
                     var temp = getRnd(0, 1);
                     temp == 1 ? clouds.push(new Cloud(128, nextSegment - (i * 150), 1)) : clouds.push(new Cloud(1024 - 256, nextSegment - (i * 150), 1));
@@ -100,20 +100,69 @@ Player.prototype.update = function () {
                 }
                 nextSegment -= 8 * 150;
                 break;
-            case 1:
+            case 1: //COLUMNS
                 for (var i = 0; i < 2; i++) {
                     for (var j = 0; j < 5; j++) {
-                        clouds.push(new Cloud(128 * (i * 5), nextSegment - (j * 100), 1));
+                        i == 0 ? clouds.push(new Cloud(128, nextSegment - (j * 100), 1)) : clouds.push(new Cloud(1024 - 256, nextSegment - (j * 100), 1));
                     }
                 }
                 nextSegment -= 5 * 100;
                 break;
-            case 2:
+            case 2: //DIAGONAL TO RIGHT
                 for (var i = 0; i < 6; i++) {
                     clouds.push(new Cloud(128 * i, nextSegment - (i * 128), 1));
                 }
                 nextSegment -= 6 * 128;
                 break;
+            case 3: //DIAGONAL TO LEFT
+                for (var i = 0; i < 6; i++) {
+                    clouds.push(new Cloud(1024 - (128 * i), nextSegment - (i * 128), 1));
+                }
+                nextSegment -= 6 * 128;
+                break;
+            case 4: //sine
+                var temp = getRnd(200, 800);
+                for (var i = 0; i < 12; i++) {
+                    
+                    clouds.push(new Cloud(temp + (128 * (Math.sin(i / 0.01))), nextSegment - (i * 128), 1));
+                }
+                nextSegment -= 12 * 128;
+                break;
+            case 5: // double sine
+                for (var j = 0; j < 2; j++) {
+                    for (var i = 0; i < 12; i++) {
+                        j == 0 ? clouds.push(new Cloud(128 + (128 * (Math.sin(i / 0.01))), nextSegment - (i * 128), 1))
+                        : clouds.push(new Cloud(700 + (128 * (Math.sin(i / 0.01))), nextSegment - (i * 128), 1));
+                    }
+                }
+                nextSegment -= 12 * 128;
+                break;
+            case 6:
+                for (var j = 0; j < 2; j++) {
+                    for (var i = 0; i < 12; i++) {
+                        j == 0 ? clouds.push(new Cloud(128 + (128 * (Math.sin(i / 0.01))), nextSegment - (i * 128), 1))
+                        : clouds.push(new Cloud(700 + (128 * (Math.cos(i / 0.01))), nextSegment - (i * 128), 1));
+                    }
+                }
+                nextSegment -= 12 * 128;
+                break;
+            case 7:
+                for (var j = 0; j < 2; j++) {
+                    for (var i = 0; i < 12; i++) {
+                        j == 0 ? clouds.push(new Cloud(128 + (128 * (Math.cos(i / 0.01))), nextSegment - (i * 128), 1))
+                        : clouds.push(new Cloud(700 + (128 * (Math.sin(i / 0.01))), nextSegment - (i * 128), 1));
+                    }
+                }
+                nextSegment -= 12 * 128;
+                break;
+            case 8:
+                for (var i = 0; i < 12; i++) {
+                    var temp = getRnd(200, 800);
+                    clouds.push(new Cloud(temp + (128 * (Math.sin(i / 0.01))), nextSegment - (i * 128), 1));
+                }
+                nextSegment -= 12 * 128;
+                break;
+
         }
 
     }
