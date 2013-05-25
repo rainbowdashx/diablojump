@@ -49,15 +49,15 @@ Player.prototype.update = function () {
     this.gravity -= 0.1;
 
 
-   /* if (this.position.y - CAMy > 768) {
-        this.jump = false;
-        this.gravity = 0;
-        this.position = new Vec2(this.position.x, 768);
-    }*/
+    /* if (this.position.y - CAMy > 768) {
+         this.jump = false;
+         this.gravity = 0;
+         this.position = new Vec2(this.position.x, 768);
+     }*/
 
     // CAMx = (this.position.x + this.image.width / 2) - SCREEN_W / 2;
     CAMx = 0;
-    if (this.position.y < CAMy +319) {
+    if (this.position.y < CAMy + 319) {
         CAMy = (this.position.y + this.image.height / 2) - SCREEN_H / 2;
     }
 
@@ -88,8 +88,23 @@ Player.prototype.update = function () {
         this.position = new Vec2(this.position.x + 5, this.position.y);
     }
 
+    if (this.position.y < nextSegment) {
 
+        nextSegment -= 768;
+        var style = getRnd(0, 100);
+        if (style < 50) {
+            for (var i = 0; i < 10; i++) {
+                clouds.push(new Cloud(128 * i, nextSegment, 1));
+            }
+        } else {
+            for (var i = 0; i < 2; i++) {
+                for (var j = 0; j < 5; j++) {
 
+                    clouds.push(new Cloud(128 * (i * 5), nextSegment - (j*100), 1));
+                }
+            }
+        }
+    }
 
 };
 
