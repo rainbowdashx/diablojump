@@ -33,6 +33,10 @@
     var imgWolke = new Image();
     imgWolke.src = 'img/wolke_norm.png';
 
+
+    var imgBackground = new Image();
+    imgBackground.src = 'img/background.png';
+
     var ctx;
     var SCREEN_W = 1024,
         SCREEN_H = 768;
@@ -46,11 +50,11 @@
 
     var clouds = [];
     for (var i = 0 ; i < 20; i++) {
-        clouds.push(new Cloud(getRnd(0, 1024), getRnd(19000, 20000),0));
+        clouds.push(new Cloud(getRnd(0, 1024), getRnd(19000, 20000), 0));
     }
 
     for (var i = 0 ; i < 5; i++) {
-        clouds.push(new Cloud(128 * i, 20250,1));
+        clouds.push(new Cloud(128 * i, 20250, 1));
     }
 
 
@@ -164,7 +168,8 @@
 
     function draw() {
         ctx = document.getElementById('main').getContext('2d');
-        ctx.fillStyle = "#08F";
+        //ctx.fillStyle = "#08F";
+        ctx.drawImage(imgBackground, 0, 0, 1024, 768);
         ctx.fillRect(0, 0, SCREEN_W, SCREEN_H);
 
 
