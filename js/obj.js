@@ -91,9 +91,10 @@ PowerUp.prototype.update = function () {
     }
 
     if (recsOverlap(this.position.x, this.position.y, this.width, this.height,
-           player.position.x + 40, player.position.y + 70, 40, 58)) {
+          player.position.x + player.boxX, player.position.y + player.boxY, player.boxW, player.boxH)) {
         this.active = false;
         player.powerUp = 1;
+        player.score += 50;
         player.powerUpTime = $.now() + 15000;
     }
 

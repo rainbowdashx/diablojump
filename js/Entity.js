@@ -67,6 +67,14 @@ function Player(x, y) {
     this.damagedTimer = $.now();
     this.health = this.maxhealth;
 
+    this.boxX = 40;
+    this.boxY = 40;
+    this.boxH = 60;
+    this.boxW = 45;
+
+    this.score = 0;
+
+
 
 }
 
@@ -102,7 +110,7 @@ Player.prototype.update = function () {
         this.sprite = sprDiabloGlide;
     }
 
-    if (this.jump &&  this.gravity > 10) {
+    if (this.jump && this.gravity > 10) {
         this.sprite = sprDiabloPowerup;
     }
 
@@ -127,25 +135,26 @@ Player.prototype.update = function () {
     }
 
     for (var i in clouds) {
-        if (this.gravity < 0 && recsOverlap(this.position.x + 40, this.position.y + 70, 40, 58,
+        if (this.gravity < 0 && recsOverlap(this.position.x + this.boxX, this.position.y + this.boxY, this.boxW, this.boxH,
             clouds[i].position.x, clouds[i].position.y, clouds[i].width, clouds[i].height)) {
-            if (this.position.y + (this.height - 12) < clouds[i].position.y) {
-                this.position = new Vec2(this.position.x, clouds[i].position.y - this.height);
+            if (this.position.y + (100 - 12) < clouds[i].position.y) {
+                this.position = new Vec2(this.position.x, clouds[i].position.y - (this.height-28));
                 this.gravity = 0;
                 this.jump = false;
                 this.doubleJump = false;
-
             }
         }
     }
 
     for (var i in souls) {
         if (recsOverlap(souls[i].position.x, souls[i].position.y, souls[i].width, souls[i].height,
-              this.position.x + 40, this.position.y + 70, 40, 58)) {
+             this.position.x + this.boxX, this.position.y + this.boxY, this.boxW, this.boxH)) {
             if (this.position.y + (this.height - 32) < souls[i].position.y) {
                 this.jump = false;
                 this.doubleJump = false;
                 souls[i].static = false;
+                this.score += 50;
+
             }
         }
     }
@@ -153,10 +162,10 @@ Player.prototype.update = function () {
     for (var i in angels) {
 
         if (recsOverlap(angels[i].position.x, angels[i].position.y, angels[i].width, angels[i].height,
-           this.position.x + 40, this.position.y + 70, 40, 58)) {
+           this.position.x + this.boxX, this.position.y + this.boxY, this.boxW, this.boxH)) {
             this.takeDmg(10);
             this.damaged = true;
-            this.damagedTimer = $.now()+500;
+            this.damagedTimer = $.now() + 500;
         }
     }
 
@@ -174,10 +183,14 @@ Player.prototype.update = function () {
             this.gravity = this.jumpPower;
             this.doubleJump = true;
             this.doubleJumpTime = $.now() + 1000;
+            this.score += 10;
+
         } else if (Key.isDown(Key.UP) && this.doubleJump && this.gravity > -1 && this.gravity < 1) {
             this.jump = true;
             this.doubleJump = false;
             this.gravity = this.jumpPower;
+            this.score += 100;
+
 
         }
 
