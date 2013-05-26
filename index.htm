@@ -27,14 +27,16 @@
     <canvas id="main" width="1024" height="768"></canvas>
 
 
+    <p id="djScore" style="float: right;"></p>
 
+    <div style="clear: both;"></div>
 
 
     <script>
 
         var imgDiablo = new Image();
         imgDiablo.src = 'img/diablo.png';
-       
+
         var imgWolke = new Image();
         imgWolke.src = 'img/wolke_norm.png';
 
@@ -51,9 +53,12 @@
         var imgPowerup = new Image();
         imgPowerup.src = 'img/powerup.png';
 
+        var imgAngelSprite = new Image();
+        imgAngelSprite.src = 'img/egel_Spr.png';
+
         //(img, pos, size, speed, frames, dir, once)
-        //var lolz = new Sprite(imgWolke, [0, 0], [32, 32],
-        //                    2, [0, 1, 2, 3, 2, 1])
+        var sprAngel = new Sprite(imgAngelSprite, [0, 0], [128, 128],
+                          6, [0, 1, 2, 3, 4, 5,4,3,2,1])
 
         //var snd = new Audio("file.wav"); 
         //snd.play();
@@ -251,6 +256,8 @@
             player.draw(CAMx, CAMy);
 
             ctx.drawImage(imgForeground, 0, 0, 1024, 768);
+
+            $("#djScore").html(Math.floor(CAMy));
 
         };
 

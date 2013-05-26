@@ -29,7 +29,8 @@ Cloud.prototype.update = function () {
 function Angel(x, y, speed) {
 
     Entity.call(this, x, y);
-    this.image = imgAngel;
+   // this.image = imgAngel;
+    this.sprite = sprAngel;
     this.offsetY = y;
     this.speed = speed;
     this.width = 128;
@@ -41,6 +42,8 @@ Angel.prototype.constructor = Angel;
 
 
 Angel.prototype.update = function () {
+
+    this.sprite.update(dt);
 
     var X, Y;
 

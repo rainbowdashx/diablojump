@@ -10,6 +10,7 @@ function Entity(x, y) {
     this.gravity = 0;
     this.jump = true;
     this.image = false;
+    this.sprite = false;
     this.active = true;
     this.anim = [];
 
@@ -23,10 +24,14 @@ Entity.prototype.draw = function (offx, offy) {
     ctx.save();
     ctx.fillStyle = this.color;
     ctx.translate(this.position.x - offx, this.position.y - offy);
-    if (!this.image) {
-        ctx.fillRect(-this.width / 2, -this.height / 2, this.width, this.height);
+    if (!this.sprite) {
+        if (!this.image) {
+            ctx.fillRect(-this.width / 2, -this.height / 2, this.width, this.height);
+        } else {
+            ctx.drawImage(this.image, 0, 0, this.image.width, this.image.height);
+        }
     } else {
-        ctx.drawImage(this.image, 0, 0, this.image.width, this.image.height);
+        this.sprite.render(ctx);
     }
 
     ctx.restore();
