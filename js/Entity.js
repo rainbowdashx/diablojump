@@ -156,7 +156,7 @@ Player.prototype.update = function () {
     for (var i in souls) {
         if (recsOverlap(souls[i].position.x, souls[i].position.y, souls[i].width, souls[i].height,
              this.position.x + this.boxX, this.position.y + this.boxY, this.boxW, this.boxH)) {
-            if (this.position.y + (this.height - 32) < souls[i].position.y) {
+            if (this.position.y + (100 - 32) < souls[i].position.y) {
                 this.jump = false;
                 this.doubleJump = false;
                 souls[i].static = false;
