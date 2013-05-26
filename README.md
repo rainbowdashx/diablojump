@@ -1,7 +1,5 @@
-diablojump
-==========
-
 God's Away on Bussiness 
+==========
 
 Gamejam Munich Mai 2013
 
