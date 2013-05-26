@@ -337,12 +337,15 @@ Player.prototype.update = function () {
         this.active = false;
         this.sprite = sprDiabloDeath;
         gameScreen = imgPlayAgain;
+        gameState = 3;
+
     }
 
     if (this.health <= 0) {
         this.sprite = sprDiabloDeath;
         this.active = false;
         gameScreen = imgPlayAgain;
+        gameState = 3;
     }
 
 };

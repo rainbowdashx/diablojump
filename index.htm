@@ -42,7 +42,6 @@
 
         </div>
 
-        <input id="djPlay" type="image" value="Play Again" onclick="window.location.reload()" src="img/playagain.png" style="position: absolute; top: 350px; left: 384px; display: none;">
     </div>
 
 
@@ -318,7 +317,9 @@
                 angel.draw(CAMx, CAMy);
             });
 
-            player.draw(CAMx, CAMy);
+            if (gameState == 1) {
+                player.draw(CAMx, CAMy);
+            }
 
             ctx.drawImage(imgForeground, 0, 0, 1024, 768);
 
@@ -328,14 +329,22 @@
 
             $("#djStamina").html("Stamina: " + Math.floor(player.stamina));
 
-            if (!player.active) {
-                $("#djPlay").show();
-            }
+       
 
             if (gameState == 0) {
-                ctx.drawImage(imgTitle, 192, 144, 640, 480);
+                ctx.drawImage(gameScreen, 192, 144, 640, 480);
                 if (Key.isDown(Key.UP)) {
                     gameState = 1;
+                }
+            }
+
+            if (gameState == 3) {
+                ctx.drawImage(gameScreen, 192, 144, 640, 480);
+                if (Key.isDown(Key.UP)) {
+                    gameState = 1;
+                   
+                    initGame();
+
                 }
             }
 
@@ -343,6 +352,29 @@
 
         };
 
+
+        function initGame() {
+
+            nextSpawn = $.now() + 10000;
+            nextSoul = $.now() + 12000;
+            nextPowerUp = -1000;
+            nextSegment = -600;
+            CAMy = 21000;
+
+            player = new Player(20, 0);
+
+            angels.push(new Angel(20, -200, 5));
+            angels.push(new Angel(1000, -200, -5));
+
+
+            for (var i = 0 ; i < 5; i++) {
+                clouds.push(new Cloud(128 * i, 250, 1));
+                clouds.push(new Cloud(1024 - (128 * i), 50, 1));
+                clouds.push(new Cloud(128 * i, -150, 1));
+                clouds.push(new Cloud(1024 - (128 * i), -350, 1));
+                clouds.push(new Cloud(128 * i, -550, 1));
+            }
+        }
     </script>
 </body>
 </html>
