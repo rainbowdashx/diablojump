@@ -167,34 +167,35 @@ Player.prototype.update = function () {
         this.damaged = false;
     }
 
- 
-    if (Key.isDown(Key.UP) && !this.jump) {
-        this.jump = true;
-        this.powerUp = 0;
-        this.gravity = this.jumpPower;
-        this.doubleJump = true;
-        this.doubleJumpTime = $.now() + 1000;
-    } else if (Key.isDown(Key.UP) && this.doubleJump && this.gravity > -1 && this.gravity < 1) {
-        this.jump = true;
-        this.doubleJump = false;
-        this.gravity = this.jumpPower;
+    if (this.active) {
+        if (Key.isDown(Key.UP) && !this.jump) {
+            this.jump = true;
+            this.powerUp = 0;
+            this.gravity = this.jumpPower;
+            this.doubleJump = true;
+            this.doubleJumpTime = $.now() + 1000;
+        } else if (Key.isDown(Key.UP) && this.doubleJump && this.gravity > -1 && this.gravity < 1) {
+            this.jump = true;
+            this.doubleJump = false;
+            this.gravity = this.jumpPower;
 
-    }
+        }
 
-    if (Key.isDown(Key.UP) && this.doubleJump && this.doubleJumpTime < $.now()) { this.doubleJump = false }
+        if (Key.isDown(Key.UP) && this.doubleJump && this.doubleJumpTime < $.now()) { this.doubleJump = false }
 
-    if (Key.isDown(Key.LEFT)) {
-        this.position = new Vec2(this.position.x - 5, this.position.y);
-    }
+        if (Key.isDown(Key.LEFT)) {
+            this.position = new Vec2(this.position.x - 5, this.position.y);
+        }
 
-    if (Key.isDown(Key.RIGHT)) {
-        this.position = new Vec2(this.position.x + 5, this.position.y);
-    }
+        if (Key.isDown(Key.RIGHT)) {
+            this.position = new Vec2(this.position.x + 5, this.position.y);
+        }
 
-    if (Key.isDown(Key.SHIFT)) {
-        this.glide = true;
-    } else {
-        this.glide = false;
+        if (Key.isDown(Key.SHIFT)) {
+            this.glide = true;
+        } else {
+            this.glide = false;
+        }
     }
 
     if (CAMy < nextPowerUp) {
@@ -288,6 +289,11 @@ Player.prototype.update = function () {
 
         }
 
+    }
+
+    if (this.health <= 0) {
+        this.sprite = sprDiabloDeath;
+        this.active = false;
     }
 
 };

@@ -23,15 +23,17 @@
 
 </head>
 <body>
+    <div style="margin:auto; width:1024px;">
+        <canvas id="main" width="1024" height="768"></canvas>
 
-    <canvas id="main" width="1024" height="768"></canvas>
-
-    <div style="float:right;">
-    <p id="djScore" style=""></p>
-    <p id="djHealth" style=""></p>
+        <div style="position: absolute; right: 20px; top: 20px;">
+            <p id="djScore" style=""></p>
+            <p id="djHealth" style=""></p>
+        </div>
     </div>
 
-    <div style="clear: both;"></div>
+
+    
 
 
 
@@ -216,13 +218,13 @@
 
         function update() {
 
-            
+
             var now = $.now();
 
             dt = (now - lastTime) / 1000.0;
 
-            player.update();
 
+            player.update();
 
             clouds = clouds.filter(function (cloud) {
                 return cloud.active;
@@ -295,7 +297,7 @@
 
             ctx.drawImage(imgForeground, 0, 0, 1024, 768);
 
-            $("#djScore").html(Math.floor(CAMy*-1));
+            $("#djScore").html(Math.floor(CAMy * -1));
 
             $("#djHealth").html(Math.floor(player.health));
 
