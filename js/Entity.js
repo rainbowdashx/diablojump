@@ -192,7 +192,14 @@ Player.prototype.update = function () {
     }
      if (this.health > this.maxhealth) {
          this.health = this.maxhealth;
-    }
+     }
+
+     if (this.position.x > 1024) {
+         this.position.x = -128;
+     }
+     if (this.position.x < -129) {
+         this.position.x = 1023;
+     }
     //INPUT
     if (this.active && gameState==1) {
         if (Key.isDown(Key.UP) && !this.jump) {
@@ -238,8 +245,6 @@ Player.prototype.update = function () {
     if (this.glideTime < $.now()) {
         this.glide = false;
     }
-
-
     if (CAMy < nextPowerUp) {
 
         var i = getRnd(0, clouds.length - 1);
