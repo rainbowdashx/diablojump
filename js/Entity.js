@@ -29,7 +29,6 @@ Entity.prototype.draw = function (offx, offy) {
         ctx.drawImage(this.image, 0, 0, this.image.width, this.image.height);
     }
 
-    
     ctx.restore();
 };
 
@@ -42,11 +41,15 @@ function Player(x, y) {
     this.glide = false;
     this.width = 128;
     this.height = 128;
-    this.jumpKey=false;
-    this.doubleJump=false;
-    this.doubleJumpTime=$.now();
+    this.jumpKey = false;
+    this.doubleJump = false;
+    this.doubleJumpTime = $.now();
+    this.powerUp = 0;
+    this.powerUpTime = $.now();
+    this.jumpPower = 10;
 
 }
+
 Player.prototype = new Entity();
 Player.prototype.constructor = Player;
 
@@ -54,8 +57,14 @@ Player.prototype.constructor = Player;
 Player.prototype.update = function () {
     this.color = "#0F0";
 
+    if (this.powerUp == 1) {
+        this.jumpPower = 30;
+    } else {
+        this.jumpPower = 10;
+    }
+
     if (this.glide && this.gravity < -1) {
-        this.gravity -= -1 ;
+        this.gravity -= -1;
     } else {
         this.gravity -= 0.1;
     }
@@ -73,35 +82,38 @@ Player.prototype.update = function () {
     }
 
     for (var i in clouds) {
-        if (this.gravity < 0 && recsOverlap(this.position.x+40, this.position.y+70, 40, 58,
+        if (this.gravity < 0 && recsOverlap(this.position.x + 40, this.position.y + 70, 40, 58,
             clouds[i].position.x, clouds[i].position.y, clouds[i].width, clouds[i].height)) {
             if (this.position.y + (this.height - 12) < clouds[i].position.y) {
                 this.position = new Vec2(this.position.x, clouds[i].position.y - this.height);
                 this.gravity = 0;
                 this.jump = false;
-                this.doubleJump=false;
-                
+                this.doubleJump = false;
+
             }
         }
     }
 
     // Easteregg, muhAHA
     this.position = new Vec2(this.position.x, this.position.y - this.gravity);
-    
-   
+
+    if (this.powerUpTime < $.now()) {
+        this.powerUp = 0;
+    }
 
     if (Key.isDown(Key.UP) && !this.jump) {
         this.jump = true;
-        this.gravity = 10;
-        this.doubleJump=true;
-         this.doubleJumpTime=$.now()+1000;
-    }else if(Key.isDown(Key.UP) &&  this.doubleJump && this.gravity>-1 && this.gravity<1){
-    this.jump = true;
-    this.doubleJump=false;
-        this.gravity = 10;
+        this.gravity = this.jumpPower;
+        this.doubleJump = true;
+        this.doubleJumpTime = $.now() + 1000;
+    } else if (Key.isDown(Key.UP) && this.doubleJump && this.gravity > -1 && this.gravity < 1) {
+        this.jump = true;
+        this.doubleJump = false;
+        this.gravity = this.jumpPower;
+
     }
-    
-    if ( Key.isDown(Key.UP) && this.doubleJump && this.doubleJumpTime < $.now() ){ this.doubleJump=false }
+
+    if (Key.isDown(Key.UP) && this.doubleJump && this.doubleJumpTime < $.now()) { this.doubleJump = false }
 
     if (Key.isDown(Key.LEFT)) {
         this.position = new Vec2(this.position.x - 5, this.position.y);
@@ -117,7 +129,16 @@ Player.prototype.update = function () {
         this.glide = false;
     }
 
+    if (CAMy < nextPowerUp) {
 
+        var i = getRnd(0, clouds.length-1);
+        var x = getRnd(clouds[i].position.x, clouds[i].position.x + 128);
+        var y = clouds[i].position.y - 32;
+        powerups.push(new PowerUp(x, y));
+
+        nextPowerUp -= getRnd(1024, 3000);
+
+    }
 
     if (CAMy < nextSegment) {
 
@@ -134,9 +155,9 @@ Player.prototype.update = function () {
             case 1: //COLUMNS
                 for (var i = 0; i < 2; i++) {
                     for (var j = 0; j < 5; j++) {
-                    var rnd=getRnd(2,5);
-                     
-                     i == 0 ? clouds.push(new Cloud(128, nextSegment - (j * 100), 1,rnd)) : clouds.push(new Cloud(1024 - 256, nextSegment - (j * 100), 1,rnd));
+                        var rnd = getRnd(2, 5);
+
+                        i == 0 ? clouds.push(new Cloud(128, nextSegment - (j * 100), 1, rnd)) : clouds.push(new Cloud(1024 - 256, nextSegment - (j * 100), 1, rnd));
                     }
                 }
                 nextSegment -= 5 * 100;
@@ -156,7 +177,7 @@ Player.prototype.update = function () {
             case 4: //sine
                 var temp = getRnd(200, 800);
                 for (var i = 0; i < 12; i++) {
-                    
+
                     clouds.push(new Cloud(temp + (128 * (Math.sin(i / 0.01))), nextSegment - (i * 128), 1));
                 }
                 nextSegment -= 12 * 128;
@@ -201,6 +222,7 @@ Player.prototype.update = function () {
     }
 
 };
+
 
 
 

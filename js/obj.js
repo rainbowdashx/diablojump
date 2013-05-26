@@ -1,4 +1,4 @@
-function Cloud(x, y, type,size) {
+function Cloud(x, y, type, size) {
 
     Entity.call(this, x, y);
     this.image = imgWolke;
@@ -26,7 +26,7 @@ Cloud.prototype.update = function () {
 
 
 
-function Angel(x, y,speed) {
+function Angel(x, y, speed) {
 
     Entity.call(this, x, y);
     this.image = imgAngel;
@@ -42,7 +42,7 @@ Angel.prototype.constructor = Angel;
 
 Angel.prototype.update = function () {
 
-    var X,Y;
+    var X, Y;
 
     X = this.position.x + this.speed;
     Y = (Math.sin(X / 250) * 200) + this.offsetY;
@@ -51,5 +51,27 @@ Angel.prototype.update = function () {
 
     if (this.position.x > 1150 || this.position.x < -100) {
         this.active = false;
+    }
+}
+
+
+function PowerUp(x, y) {
+    Entity.call(this, x, y);
+    this.image = imgPowerup;
+    this.width = 32;
+    this.height = 32;
+}
+
+PowerUp.prototype = new Entity();
+PowerUp.prototype.constructor = PowerUp;
+
+
+PowerUp.prototype.update = function () {
+
+    if (recsOverlap(this.position.x, this.position.y, this.width, this.height,
+           player.position.x + 40, player.position.y + 70, 40, 58)) {
+        this.active = false;
+        player.powerUp = 1;
+        player.powerUpTime = $.now() + 15000;
     }
 }

@@ -47,6 +47,10 @@
         var imgForeground = new Image();
         imgForeground.src = 'img/foreground.png';
 
+
+        var imgPowerup = new Image();
+        imgPowerup.src = 'img/powerup.png';
+
         //(img, pos, size, speed, frames, dir, once)
         //var lolz = new Sprite(imgWolke, [0, 0], [32, 32],
         //                    2, [0, 1, 2, 3, 2, 1])
@@ -56,6 +60,7 @@
         //
 
         var nextSpawn = $.now() + 10000;
+        var nextPowerUp = 19000;
         var ctx;
         var SCREEN_W = 1024,
             SCREEN_H = 768;
@@ -69,6 +74,7 @@
         var players = {};
         var player = new Player(20, 20000);
         var angels = [];
+        var powerups = [];
         angels.push(new Angel(20, 19800, 5));
         angels.push(new Angel(1000, 19800, -5));
 
@@ -199,6 +205,10 @@
                 return angel.active;
             });
 
+            powerups = powerups.filter(function (power) {
+                return power.active;
+            });
+
             if (nextSpawn < $.now()) {
                 var Y = getRnd(0, 500);
                 var temp = getRnd(0, 1);
@@ -228,6 +238,11 @@
                 cloud.draw(CAMx, CAMy);
             });
 
+            powerups.forEach(function (power) {
+                power.update();
+                power.draw(CAMx, CAMy);
+            });
+
             angels.forEach(function (angel) {
                 angel.update();
                 angel.draw(CAMx, CAMy);
@@ -242,3 +257,4 @@
     </script>
 </body>
 </html>
+
