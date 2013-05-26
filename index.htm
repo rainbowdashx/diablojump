@@ -42,6 +42,8 @@
         <div style="position: absolute; right: 20px; top: 20px;">
             <p id="djScore" style=""></p>
             <p id="djHealth" style=""></p>
+            <p id="djStamina" style=""></p>
+
         </div>
     </div>
 
@@ -312,7 +314,10 @@
 
             $("#djScore").html("Score: "+player.score);
 
-            $("#djHealth").html("Health: "+Math.floor(player.health));
+            $("#djHealth").html("Health: " + Math.floor(player.health));
+
+            $("#djStamina").html("Stamina: " + Math.floor(player.stamina));
+
 
 
         };

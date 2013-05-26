@@ -66,6 +66,10 @@ function Player(x, y) {
     this.damaged = false;
     this.damagedTimer = $.now();
     this.health = this.maxhealth;
+    this.maxstamina = 100;
+    this.stamina = this.maxstamina;
+
+    this.staminaTimer = $.now();
 
     this.boxX = 40;
     this.boxY = 40;
@@ -183,6 +187,13 @@ Player.prototype.update = function () {
         this.damaged = false;
     }
 
+    if (this.staminaTimer < $.now()) {
+        this.stamina += 1;
+    }
+    if (this.stamina > 100) {
+        this.stamina = 100;
+    }
+    //INPUT
     if (this.active) {
         if (Key.isDown(Key.UP) && !this.jump) {
             this.jump = true;
@@ -190,28 +201,31 @@ Player.prototype.update = function () {
             this.gravity = this.jumpPower;
             this.doubleJump = true;
             this.doubleJumpTime = $.now() + 1000;
-            this.score += 10;
+            this.score += 60;
 
-        } /*else if (Key.isDown(Key.UP) && this.doubleJump && this.gravity > -1 && this.gravity < 1) {
-            this.jump = true;
-            this.doubleJump = false;
-            this.gravity = this.jumpPower;
-            this.score += 100;
+        }
 
+        if (Key.isDown(Key.UP) && this.gravity < 0 && this.doubleJumpTime < $.now() && !this.oldJump && this.stamina > 9) {
+            this.gravity += 2;
+            this.glide = true;
+            if (this.glideTime < $.now()) {
+                this.stamina -= 10;
+            }
+            this.glideTime = $.now() + 100;
+            this.doubleJumpTime = $.now() + 100;
+            this.oldJump = true;
+            this.score += 1;
+            this.staminaTimer = $.now()+5000;
+        }
 
-        }*/
-
-        // if (Key.isDown(Key.UP) && this.doubleJump && this.doubleJumpTime < $.now()) { this.doubleJump = false }
-
-        if (Key.isDown(Key.UP) && this.gravity < 0 && this.doubleJumpTime < $.now() && !this.oldJump) {
-            this.gravity += 1;
+        if (Key.isDown(Key.UP) && this.gravity < -1 && this.jump) {
+            this.gravity = -1;
             this.glide = true;
             this.glideTime = $.now() + 100;
             this.doubleJumpTime = $.now() + 100;
             this.oldJump = true;
 
         }
-
         if (Key.isDown(Key.LEFT)) {
             this.position = new Vec2(this.position.x - 5, this.position.y);
         }
@@ -220,7 +234,7 @@ Player.prototype.update = function () {
             this.position = new Vec2(this.position.x + 5, this.position.y);
         }
     }
-
+    //INPUT
     if (this.glideTime < $.now()) {
         this.glide = false;
     }
