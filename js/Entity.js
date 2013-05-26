@@ -42,6 +42,9 @@ function Player(x, y) {
     this.glide = false;
     this.width = 128;
     this.height = 128;
+    this.jumpKey=false;
+    this.doubleJump=false;
+    this.doubleJumpTime=$.now();
 
 }
 Player.prototype = new Entity();
@@ -70,23 +73,35 @@ Player.prototype.update = function () {
     }
 
     for (var i in clouds) {
-        if (this.gravity < 0 && recsOverlap(this.position.x, this.position.y, this.width, this.height,
+        if (this.gravity < 0 && recsOverlap(this.position.x+40, this.position.y+70, 40, 58,
             clouds[i].position.x, clouds[i].position.y, clouds[i].width, clouds[i].height)) {
-            if (this.position.y + (this.height - 32) < clouds[i].position.y) {
+            if (this.position.y + (this.height - 12) < clouds[i].position.y) {
                 this.position = new Vec2(this.position.x, clouds[i].position.y - this.height);
                 this.gravity = 0;
                 this.jump = false;
+                this.doubleJump=false;
+                
             }
         }
     }
 
     // Easteregg, muhAHA
     this.position = new Vec2(this.position.x, this.position.y - this.gravity);
+    
+   
 
     if (Key.isDown(Key.UP) && !this.jump) {
         this.jump = true;
         this.gravity = 10;
+        this.doubleJump=true;
+         this.doubleJumpTime=$.now()+1000;
+    }else if(Key.isDown(Key.UP) &&  this.doubleJump && this.gravity>-1 && this.gravity<1){
+    this.jump = true;
+    this.doubleJump=false;
+        this.gravity = 10;
     }
+    
+    if ( Key.isDown(Key.UP) && this.doubleJump && this.doubleJumpTime < $.now() ){ this.doubleJump=false }
 
     if (Key.isDown(Key.LEFT)) {
         this.position = new Vec2(this.position.x - 5, this.position.y);
@@ -106,7 +121,7 @@ Player.prototype.update = function () {
 
     if (CAMy < nextSegment) {
 
-        var style = getRnd(0, 8);
+        var style = getRnd(0, 12);
         switch (style) {
             case 0: // RANDOM COLUMNS
                 for (var i = 0; i < 8; i++) {
@@ -119,7 +134,9 @@ Player.prototype.update = function () {
             case 1: //COLUMNS
                 for (var i = 0; i < 2; i++) {
                     for (var j = 0; j < 5; j++) {
-                        i == 0 ? clouds.push(new Cloud(128, nextSegment - (j * 100), 1)) : clouds.push(new Cloud(1024 - 256, nextSegment - (j * 100), 1));
+                    var rnd=getRnd(2,5);
+                     
+                     i == 0 ? clouds.push(new Cloud(128, nextSegment - (j * 100), 1,rnd)) : clouds.push(new Cloud(1024 - 256, nextSegment - (j * 100), 1,rnd));
                     }
                 }
                 nextSegment -= 5 * 100;
@@ -171,7 +188,7 @@ Player.prototype.update = function () {
                 }
                 nextSegment -= 12 * 128;
                 break;
-            case 8: //SCATTER
+            default: //SCATTER
                 for (var i = 0; i < 12; i++) {
                     var temp = getRnd(200, 800);
                     clouds.push(new Cloud(temp + (128 * (Math.sin(i / 0.01))), nextSegment - (i * 128), 1));

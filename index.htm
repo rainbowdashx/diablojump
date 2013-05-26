@@ -44,9 +44,16 @@
         var imgAngel = new Image();
         imgAngel.src = 'img/engel.png';
 
+        var imgForeground = new Image();
+        imgForeground.src = 'img/foreground.png';
+
         //(img, pos, size, speed, frames, dir, once)
         //var lolz = new Sprite(imgWolke, [0, 0], [32, 32],
-          //                    2, [0, 1, 2, 3, 2, 1])
+        //                    2, [0, 1, 2, 3, 2, 1])
+
+        //var snd = new Audio("file.wav"); 
+        //snd.play();
+        //
 
         var nextSpawn = $.now() + 10000;
         var ctx;
@@ -210,8 +217,8 @@
         function draw() {
 
             ctx = document.getElementById('main').getContext('2d');
-            ctx.fillStyle = "#08F";
-            ctx.fillRect(0, 0, SCREEN_W, SCREEN_H);
+            /*ctx.fillStyle = "#08F";
+            ctx.fillRect(0, 0, SCREEN_W, SCREEN_H);*/
 
             ctx.translate(0, 0);
             ctx.drawImage(imgBackground, 0, 0, 1024, 768);
@@ -227,6 +234,9 @@
             });
 
             player.draw(CAMx, CAMy);
+
+            ctx.drawImage(imgForeground, 0, 0, 1024, 768);
+
         };
 
     </script>

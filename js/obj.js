@@ -1,10 +1,11 @@
-function Cloud(x, y, type) {
+function Cloud(x, y, type,size) {
 
     Entity.call(this, x, y);
     this.image = imgWolke;
     this.cloudType = type; //0 static //1 temp
     this.width = 128;
     this.height = 32;
+    this.size = size || 4;
 
 }
 Cloud.prototype = new Entity();
@@ -22,6 +23,7 @@ Cloud.prototype.update = function () {
         }
     }
 }
+
 
 
 function Angel(x, y,speed) {
