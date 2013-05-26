@@ -74,6 +74,8 @@ function Player(x, y) {
 
     this.score = 0;
 
+    this.oldJump = false;
+
 
 
 }
@@ -84,6 +86,11 @@ Player.prototype.constructor = Player;
 
 Player.prototype.update = function () {
     this.color = "#0F0";
+
+    if (!Key.isDown(Key.UP)) {
+        this.oldJump = false
+    }
+
 
     if (this.powerUp == 1) {
         this.jumpPower = 30;
@@ -106,7 +113,7 @@ Player.prototype.update = function () {
         this.sprite = sprDiabloJump;
     }
 
-    if (this.glide && this.gravity < 0) {
+    if (this.glide) {
         this.sprite = sprDiabloGlide;
     }
 
@@ -138,7 +145,7 @@ Player.prototype.update = function () {
         if (this.gravity < 0 && recsOverlap(this.position.x + this.boxX, this.position.y + this.boxY, this.boxW, this.boxH,
             clouds[i].position.x, clouds[i].position.y, clouds[i].width, clouds[i].height)) {
             if (this.position.y + (100 - 12) < clouds[i].position.y) {
-                this.position = new Vec2(this.position.x, clouds[i].position.y - (this.height-28));
+                this.position = new Vec2(this.position.x, clouds[i].position.y - (this.height - 28));
                 this.gravity = 0;
                 this.jump = false;
                 this.doubleJump = false;
@@ -185,16 +192,25 @@ Player.prototype.update = function () {
             this.doubleJumpTime = $.now() + 1000;
             this.score += 10;
 
-        } else if (Key.isDown(Key.UP) && this.doubleJump && this.gravity > -1 && this.gravity < 1) {
+        } /*else if (Key.isDown(Key.UP) && this.doubleJump && this.gravity > -1 && this.gravity < 1) {
             this.jump = true;
             this.doubleJump = false;
             this.gravity = this.jumpPower;
             this.score += 100;
 
 
-        }
+        }*/
 
-        if (Key.isDown(Key.UP) && this.doubleJump && this.doubleJumpTime < $.now()) { this.doubleJump = false }
+        // if (Key.isDown(Key.UP) && this.doubleJump && this.doubleJumpTime < $.now()) { this.doubleJump = false }
+
+        if (Key.isDown(Key.UP) && this.gravity < 0 && this.doubleJumpTime < $.now() && !this.oldJump) {
+            this.gravity += 1;
+            this.glide = true;
+            this.glideTime = $.now() + 100;
+            this.doubleJumpTime = $.now() + 100;
+            this.oldJump = true;
+
+        }
 
         if (Key.isDown(Key.LEFT)) {
             this.position = new Vec2(this.position.x - 5, this.position.y);
@@ -203,13 +219,12 @@ Player.prototype.update = function () {
         if (Key.isDown(Key.RIGHT)) {
             this.position = new Vec2(this.position.x + 5, this.position.y);
         }
-
-        if (Key.isDown(Key.SHIFT)) {
-            this.glide = true;
-        } else {
-            this.glide = false;
-        }
     }
+
+    if (this.glideTime < $.now()) {
+        this.glide = false;
+    }
+
 
     if (CAMy < nextPowerUp) {
 
