@@ -133,11 +133,7 @@ Player.prototype.update = function () {
         this.sprite = sprDiabloHit;
     }
     // ANIMATIONS
-    /* if (this.position.y - CAMy > 768) {
-         this.jump = false;
-         this.gravity = 0;
-         this.position = new Vec2(this.position.x, 768);
-     }*/
+
 
     // CAMx = (this.position.x + this.image.width / 2) - SCREEN_W / 2;
     CAMx = 0;
@@ -165,6 +161,7 @@ Player.prototype.update = function () {
                 this.doubleJump = false;
                 souls[i].static = false;
                 this.score += 50;
+                this.health += 10;
 
             }
         }
@@ -190,8 +187,11 @@ Player.prototype.update = function () {
     if (this.staminaTimer < $.now()) {
         this.stamina += 1;
     }
-    if (this.stamina > 100) {
-        this.stamina = 100;
+    if (this.stamina > this.maxstamina) {
+        this.stamina = this.maxstamina;
+    }
+     if (this.health > this.maxhealth) {
+         this.health = this.maxhealth;
     }
     //INPUT
     if (this.active) {
@@ -215,7 +215,7 @@ Player.prototype.update = function () {
             this.doubleJumpTime = $.now() + 100;
             this.oldJump = true;
             this.score += 1;
-            this.staminaTimer = $.now()+5000;
+            this.staminaTimer = $.now() + 5000;
         }
 
         if (Key.isDown(Key.UP) && this.gravity < -1 && this.jump) {
@@ -331,6 +331,11 @@ Player.prototype.update = function () {
 
         }
 
+    }
+
+   if (this.position.y - CAMy > 2000) {
+        this.active = false;
+        this.sprite = sprDiabloDeath;
     }
 
     if (this.health <= 0) {
