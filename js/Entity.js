@@ -96,7 +96,7 @@ Player.prototype.update = function () {
         this.sprite = sprDiabloJump;
     }
 
-    if (this.glide) {
+    if (this.glide && this.gravity<0) {
         this.sprite = sprDiabloGlide;
     }
 
