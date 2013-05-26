@@ -96,7 +96,7 @@ Player.prototype.update = function () {
         this.sprite = sprDiabloJump;
     }
 
-    if (this.glide && this.gravity<0) {
+    if (this.glide && this.gravity < 0) {
         this.sprite = sprDiabloGlide;
     }
 
@@ -130,6 +130,17 @@ Player.prototype.update = function () {
                 this.jump = false;
                 this.doubleJump = false;
 
+            }
+        }
+    }
+
+    for (var i in souls) {
+        if (recsOverlap(souls[i].position.x, souls[i].position.y, souls[i].width, souls[i].height,
+              this.position.x + 40, this.position.y + 70, 40, 58)) {
+            if (this.position.y + (this.height - 32) < souls[i].position.y) {
+                this.jump = false;
+                this.doubleJump = false;
+                souls[i].static = false;
             }
         }
     }
@@ -171,9 +182,9 @@ Player.prototype.update = function () {
 
     if (CAMy < nextPowerUp) {
 
-        var i = getRnd(0, clouds.length-1);
+        var i = getRnd(0, clouds.length - 1);
         var x = getRnd(clouds[i].position.x, clouds[i].position.x + 128);
-        var y = CAMy-100;
+        var y = CAMy - 100;
         powerups.push(new PowerUp(x, y));
 
         nextPowerUp -= getRnd(1024, 4000);
@@ -252,8 +263,7 @@ Player.prototype.update = function () {
             default: //SCATTER
                 for (var i = 0; i < 12; i++) {
                     var temp = getRnd(200, 800);
-                    var soul = getRnd(0, 100);
-                    
+
                     clouds.push(new Cloud(temp + (128 * (Math.sin(i / 0.01))), nextSegment - (i * 128), 1));
                 }
                 nextSegment -= 12 * 128;

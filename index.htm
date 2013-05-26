@@ -81,6 +81,7 @@
         //
 
         var nextSpawn = $.now() + 10000;
+        var nextSoul = $.now() + 12000;
         var nextPowerUp = -1000;
         var ctx;
         var SCREEN_W = 1024,
@@ -96,6 +97,7 @@
         var player = new Player(20, 0);
         var angels = [];
         var powerups = [];
+        var souls = [];
         angels.push(new Angel(20, -200, 5));
         angels.push(new Angel(1000, -200, -5));
 
@@ -210,6 +212,7 @@
 
         function update() {
 
+            
             var now = $.now();
 
             dt = (now - lastTime) / 1000.0;
@@ -230,13 +233,23 @@
                 return power.active;
             });
 
-            if (nextSpawn < $.now()) {
+            souls = souls.filter(function (soul) {
+                return soul.active;
+            });
+
+            if (nextSpawn < now) {
                 var Y = getRnd(0, 500);
                 var temp = getRnd(0, 1);
                 temp == 1 ?
                 angels.push(new Angel(0, CAMy + Y, 5)) :
                 angels.push(new Angel(1050, CAMy + Y, -5));
-                nextSpawn = $.now() + getRnd(5000, 15000);
+                nextSpawn = now + getRnd(5000, 15000);
+            }
+
+            if (nextSoul < now) {
+
+                souls.push(new Soul(getRnd(0, 1024), CAMy + 1000));
+                nextSoul = now + getRnd(5000, 10000);
             }
 
             draw();
@@ -257,6 +270,11 @@
             clouds.forEach(function (cloud) {
                 cloud.update();
                 cloud.draw(CAMx, CAMy);
+            });
+
+            souls.forEach(function (soul) {
+                soul.update();
+                soul.draw(CAMx, CAMy);
             });
 
             powerups.forEach(function (power) {

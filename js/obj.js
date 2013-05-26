@@ -116,7 +116,9 @@ function Soul(x, y) {
     this.image = imgSoul;
     this.width = 64;
     this.height = 128;
-    this.static = false;
+    this.static = true;
+    this.offsetX = x;
+    this.speed = -5;
 
 }
 
@@ -127,5 +129,23 @@ Soul.prototype.constructor = Soul;
 
 Soul.prototype.update = function () {
 
+    if (!this.static) {
+        this.gravity -= 0.1;
+        this.position = new Vec2(this.position.x, this.position.y - this.gravity);
+    }
+
+    if (this.static) {
+        var X, Y;
+
+        Y = this.position.y + this.speed;
+        X = (Math.sin(Y / 250) * 200) + this.offsetX;
+
+        this.position = new Vec2(X, Y);
+    }
+
   
+    if (this.position.y > CAMy + 2000 || this.position.y < CAMy - 500) {
+
+        this.active = false;
+    }
 }
