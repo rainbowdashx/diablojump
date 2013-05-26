@@ -169,7 +169,7 @@ Player.prototype.update = function () {
 
     for (var i in angels) {
 
-        if (recsOverlap(angels[i].position.x, angels[i].position.y, angels[i].width, angels[i].height,
+        if (recsOverlap(angels[i].position.x+30, angels[i].position.y+30, 60, 60,
            this.position.x + this.boxX, this.position.y + this.boxY, this.boxW, this.boxH)) {
             this.takeDmg(10);
             this.damaged = true;

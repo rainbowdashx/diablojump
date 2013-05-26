@@ -45,9 +45,11 @@
             <p id="djStamina" style=""></p>
 
         </div>
+
+    <input id="djPlay" type="image" value="Play Again" onClick="window.location.reload()" src="img/playagain.png" style="position:absolute; top:350px; left:384px; display:none; ">
+
     </div>
 
-    <input type="button" value="Play Again" onClick="window.location.reload()">
 
 
     
@@ -94,6 +96,9 @@
         var imgSoul = new Image();
         imgSoul.src = 'img/soul.png';
 
+        var imgTitle = new Image();
+        imgTitle.src = 'img/title.png';
+
 
         //(img, pos, size, speed, frames, dir, once)
         var sprAngel = new Sprite(imgAngelSprite, [0, 0], [128, 128],
@@ -103,6 +108,7 @@
         //snd.play();
         //
 
+        var gameState = 0;
         var nextSpawn = $.now() + 10000;
         var nextSoul = $.now() + 12000;
         var nextPowerUp = -1000;
@@ -235,50 +241,61 @@
 
         function update() {
 
+            if (gameState == 1) {
+                var now = $.now();
 
-            var now = $.now();
-
-            dt = (now - lastTime) / 1000.0;
-
-
-            player.update();
-
-            clouds = clouds.filter(function (cloud) {
-                return cloud.active;
-            });
+                dt = (now - lastTime) / 1000.0;
 
 
-            angels = angels.filter(function (angel) {
-                return angel.active;
-            });
+                player.update();
 
-            powerups = powerups.filter(function (power) {
-                return power.active;
-            });
+                clouds = clouds.filter(function (cloud) {
+                    return cloud.active;
+                });
 
-            souls = souls.filter(function (soul) {
-                return soul.active;
-            });
 
-            if (nextSpawn < now) {
-                var Y = getRnd(0, 500);
-                var temp = getRnd(0, 1);
-                temp == 1 ?
-                angels.push(new Angel(0, CAMy + Y, 5)) :
-                angels.push(new Angel(1050, CAMy + Y, -5));
-                nextSpawn = now + getRnd(5000, 15000);
+                angels = angels.filter(function (angel) {
+                    return angel.active;
+                });
+
+                powerups = powerups.filter(function (power) {
+                    return power.active;
+                });
+
+                souls = souls.filter(function (soul) {
+                    return soul.active;
+                });
+
+                if (nextSpawn < now) {
+                    var Y = getRnd(0, 500);
+                    var temp = getRnd(0, 1);
+                    temp == 1 ?
+                    angels.push(new Angel(0, CAMy + Y, 5)) :
+                    angels.push(new Angel(1050, CAMy + Y, -5));
+                    nextSpawn = now + getRnd(5000, 15000);
+                }
+
+                if (nextSoul < now) {
+
+                    souls.push(new Soul(getRnd(0, 1024), CAMy + 1000));
+                    nextSoul = now + getRnd(5000, 10000);
+                }
+
+                draw();
+
+                lastTime = now;
+
+                requestAnimFrame(update);
+            } else {
+                ctx = document.getElementById('main').getContext('2d');
+                ctx.drawImage(imgTitle, 0, 0, 1024, 768);
+                if (Key.isDown(Key.UP)) {
+                    gameState = 1;
+                }
+                requestAnimFrame(update);
+
             }
-
-            if (nextSoul < now) {
-
-                souls.push(new Soul(getRnd(0, 1024), CAMy + 1000));
-                nextSoul = now + getRnd(5000, 10000);
-            }
-
-            draw();
-            requestAnimFrame(update);
-
-            lastTime = now;
+            
         };
 
         function draw() {
@@ -319,6 +336,10 @@
             $("#djHealth").html("Health: " + Math.floor(player.health));
 
             $("#djStamina").html("Stamina: " + Math.floor(player.stamina));
+
+            if (!player.active) {
+                $("#djPlay").show();
+            }
 
 
 
