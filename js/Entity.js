@@ -63,6 +63,8 @@ function Player(x, y) {
     this.powerUpTime = $.now();
     this.jumpPower = 10;
     this.maxhealth = 100;
+    this.damaged = false;
+    this.damagedTimer = $.now();
     this.health = this.maxhealth;
 
 
@@ -100,7 +102,7 @@ Player.prototype.update = function () {
         this.sprite = sprDiabloGlide;
     }
 
-    if (this.jump && this.powerUp && this.gravity > 0) {
+    if (this.jump &&  this.gravity > 10) {
         this.sprite = sprDiabloPowerup;
     }
 
@@ -108,7 +110,10 @@ Player.prototype.update = function () {
         this.sprite = sprDiabloIdle;
     }
 
-
+    if (this.damaged) {
+        this.sprite = sprDiabloHit;
+    }
+    // ANIMATIONS
     /* if (this.position.y - CAMy > 768) {
          this.jump = false;
          this.gravity = 0;
@@ -145,15 +150,27 @@ Player.prototype.update = function () {
         }
     }
 
+    for (var i in angels) {
+
+        if (recsOverlap(angels[i].position.x, angels[i].position.y, angels[i].width, angels[i].height,
+           this.position.x + 40, this.position.y + 70, 40, 58)) {
+            this.takeDmg(10);
+            this.damaged = true;
+            this.damagedTimer = $.now()+500;
+        }
+    }
+
     // Easteregg, muhAHA
     this.position = new Vec2(this.position.x, this.position.y - this.gravity);
 
-    if (this.powerUpTime < $.now()) {
-        this.powerUp = 0;
+    if (this.damagedTimer < $.now()) {
+        this.damaged = false;
     }
 
+ 
     if (Key.isDown(Key.UP) && !this.jump) {
         this.jump = true;
+        this.powerUp = 0;
         this.gravity = this.jumpPower;
         this.doubleJump = true;
         this.doubleJumpTime = $.now() + 1000;

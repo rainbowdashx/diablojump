@@ -52,11 +52,6 @@ Angel.prototype.update = function () {
     this.position = new Vec2(X, Y);
 
 
-    if (recsOverlap(this.position.x, this.position.y, this.width, this.height,
-           player.position.x + 40, player.position.y + 70, 40, 58)) {
-        player.takeDmg(10);
-    }
-
     if (this.position.x > 1150 || this.position.x < -100) {
         this.active = false;
     }
