@@ -194,7 +194,7 @@ Player.prototype.update = function () {
          this.health = this.maxhealth;
     }
     //INPUT
-    if (this.active) {
+    if (this.active && gameState==1) {
         if (Key.isDown(Key.UP) && !this.jump) {
             this.jump = true;
             this.powerUp = 0;
@@ -336,11 +336,13 @@ Player.prototype.update = function () {
    if (this.position.y - CAMy > 2000) {
         this.active = false;
         this.sprite = sprDiabloDeath;
+        gameScreen = imgPlayAgain;
     }
 
     if (this.health <= 0) {
         this.sprite = sprDiabloDeath;
         this.active = false;
+        gameScreen = imgPlayAgain;
     }
 
 };

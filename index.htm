@@ -4,19 +4,15 @@
 <head>
     <title>Diablo Jump</title>
 
-	<style type="text/css">
-		body
-		{
-		
-		background-color:#000;
-		color:#FFF;
-		font-family:Arial;
-		font-size:20px;
-		
-		}
-		
-	</style>
-	
+    <style type="text/css">
+        body {
+            background-color: #000;
+            color: #FFF;
+            font-family: Arial;
+            font-size: 20px;
+        }
+    </style>
+
     <style>
         #main {
             width: 1024px;
@@ -36,7 +32,7 @@
 
 </head>
 <body>
-    <div style="margin:auto; width:1024px; position:relative;">
+    <div style="margin: auto; width: 1024px; position: relative;">
         <canvas id="main" width="1024" height="768"></canvas>
 
         <div style="position: absolute; right: 20px; top: 20px;">
@@ -46,13 +42,12 @@
 
         </div>
 
-    <input id="djPlay" type="image" value="Play Again" onClick="window.location.reload()" src="img/playagain.png" style="position:absolute; top:350px; left:384px; display:none; ">
-
+        <input id="djPlay" type="image" value="Play Again" onclick="window.location.reload()" src="img/playagain.png" style="position: absolute; top: 350px; left: 384px; display: none;">
     </div>
 
 
 
-    
+
 
 
 
@@ -99,6 +94,9 @@
         var imgTitle = new Image();
         imgTitle.src = 'img/title.png';
 
+        var imgPlayAgain = new Image();
+        imgPlayAgain.src = 'img/playagain.png';
+
 
         //(img, pos, size, speed, frames, dir, once)
         var sprAngel = new Sprite(imgAngelSprite, [0, 0], [128, 128],
@@ -108,6 +106,7 @@
         //snd.play();
         //
 
+        var gameScreen = imgTitle;
         var gameState = 0;
         var nextSpawn = $.now() + 10000;
         var nextSoul = $.now() + 12000;
@@ -241,61 +240,53 @@
 
         function update() {
 
-            if (gameState == 1) {
-                var now = $.now();
 
-                dt = (now - lastTime) / 1000.0;
+            var now = $.now();
 
-
-                player.update();
-
-                clouds = clouds.filter(function (cloud) {
-                    return cloud.active;
-                });
+            dt = (now - lastTime) / 1000.0;
 
 
-                angels = angels.filter(function (angel) {
-                    return angel.active;
-                });
+            player.update();
 
-                powerups = powerups.filter(function (power) {
-                    return power.active;
-                });
+            clouds = clouds.filter(function (cloud) {
+                return cloud.active;
+            });
 
-                souls = souls.filter(function (soul) {
-                    return soul.active;
-                });
 
-                if (nextSpawn < now) {
-                    var Y = getRnd(0, 500);
-                    var temp = getRnd(0, 1);
-                    temp == 1 ?
-                    angels.push(new Angel(0, CAMy + Y, 5)) :
-                    angels.push(new Angel(1050, CAMy + Y, -5));
-                    nextSpawn = now + getRnd(5000, 15000);
-                }
+            angels = angels.filter(function (angel) {
+                return angel.active;
+            });
 
-                if (nextSoul < now) {
+            powerups = powerups.filter(function (power) {
+                return power.active;
+            });
 
-                    souls.push(new Soul(getRnd(0, 1024), CAMy + 1000));
-                    nextSoul = now + getRnd(5000, 10000);
-                }
+            souls = souls.filter(function (soul) {
+                return soul.active;
+            });
 
-                draw();
-
-                lastTime = now;
-
-                requestAnimFrame(update);
-            } else {
-                ctx = document.getElementById('main').getContext('2d');
-                ctx.drawImage(imgTitle, 0, 0, 1024, 768);
-                if (Key.isDown(Key.UP)) {
-                    gameState = 1;
-                }
-                requestAnimFrame(update);
-
+            if (nextSpawn < now) {
+                var Y = getRnd(0, 500);
+                var temp = getRnd(0, 1);
+                temp == 1 ?
+                angels.push(new Angel(0, CAMy + Y, 5)) :
+                angels.push(new Angel(1050, CAMy + Y, -5));
+                nextSpawn = now + getRnd(5000, 15000);
             }
-            
+
+            if (nextSoul < now) {
+
+                souls.push(new Soul(getRnd(0, 1024), CAMy + 1000));
+                nextSoul = now + getRnd(5000, 10000);
+            }
+
+            draw();
+
+            lastTime = now;
+
+            requestAnimFrame(update);
+
+
         };
 
         function draw() {
@@ -331,7 +322,7 @@
 
             ctx.drawImage(imgForeground, 0, 0, 1024, 768);
 
-            $("#djScore").html("Score: "+player.score);
+            $("#djScore").html("Score: " + player.score);
 
             $("#djHealth").html("Health: " + Math.floor(player.health));
 
@@ -339,6 +330,13 @@
 
             if (!player.active) {
                 $("#djPlay").show();
+            }
+
+            if (gameState == 0) {
+                ctx.drawImage(imgTitle, 192, 144, 640, 480);
+                if (Key.isDown(Key.UP)) {
+                    gameState = 1;
+                }
             }
 
 
