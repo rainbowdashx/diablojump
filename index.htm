@@ -26,25 +26,37 @@
 
     <canvas id="main" width="1024" height="768"></canvas>
 
-
-    <p id="djScore" style="float: right;"></p>
+    <div style="float:right;">
+    <p id="djScore" style=""></p>
+    <p id="djHealth" style=""></p>
+    </div>
 
     <div style="clear: both;"></div>
 
 
+
     <script>
 
-        var imgDiablo = new Image();
-        imgDiablo.src = 'img/diablo.png';
+
+        var imgDiabloSprite = new Image();
+        imgDiabloSprite.src = 'img/diablo.png';
+
+        var sprDiabloIdle = new Sprite(imgDiabloSprite, [0, 0], [128, 128],
+                       9, [0]);
+        var sprDiabloJump = new Sprite(imgDiabloSprite, [128, 0], [128, 128],
+                     9, [0]);
+        var sprDiabloFall = new Sprite(imgDiabloSprite, [256, 0], [128, 128],
+                     9, [0]);
+        var sprDiabloGlide = new Sprite(imgDiabloSprite, [384, 0], [128, 128],
+                     9, [0]);
+        var sprDiabloPowerup = new Sprite(imgDiabloSprite, [512, 0], [128, 128],
+                     9, [0]);
 
         var imgWolke = new Image();
         imgWolke.src = 'img/wolke_norm.png';
 
         var imgBackground = new Image();
         imgBackground.src = 'img/background.png';
-
-        var imgAngel = new Image();
-        imgAngel.src = 'img/engel.png';
 
         var imgForeground = new Image();
         imgForeground.src = 'img/foreground.png';
@@ -56,16 +68,20 @@
         var imgAngelSprite = new Image();
         imgAngelSprite.src = 'img/egel_Spr.png';
 
+        var imgSoul = new Image();
+        imgSoul.src = 'img/soul.png';
+
+
         //(img, pos, size, speed, frames, dir, once)
         var sprAngel = new Sprite(imgAngelSprite, [0, 0], [128, 128],
-                          6, [0, 1, 2, 3, 4, 5,4,3,2,1])
+                          9, [0, 1, 2, 3, 4, 5, 4, 3, 2, 1])
 
         //var snd = new Audio("file.wav"); 
         //snd.play();
         //
 
         var nextSpawn = $.now() + 10000;
-        var nextPowerUp = 19000;
+        var nextPowerUp = -1000;
         var ctx;
         var SCREEN_W = 1024,
             SCREEN_H = 768;
@@ -75,24 +91,24 @@
             MY = 0;
         var lastTime = $.now();
         var dt = 0;
-        var nextSegment = 19400;
+        var nextSegment = -600;
         var players = {};
-        var player = new Player(20, 20000);
+        var player = new Player(20, 0);
         var angels = [];
         var powerups = [];
-        angels.push(new Angel(20, 19800, 5));
-        angels.push(new Angel(1000, 19800, -5));
+        angels.push(new Angel(20, -200, 5));
+        angels.push(new Angel(1000, -200, -5));
 
         var clouds = [];
         /*for (var i = 0 ; i < 20; i++) {
             clouds.push(new Cloud(getRnd(0, 1024), getRnd(19000, 20000), 0));
         }*/
         for (var i = 0 ; i < 5; i++) {
-            clouds.push(new Cloud(128 * i, 20250, 1));
-            clouds.push(new Cloud(1024 - (128 * i), 20050, 1));
-            clouds.push(new Cloud(128 * i, 19850, 1));
-            clouds.push(new Cloud(1024 - (128 * i), 19650, 1));
-            clouds.push(new Cloud(128 * i, 19450, 1));
+            clouds.push(new Cloud(128 * i, 250, 1));
+            clouds.push(new Cloud(1024 - (128 * i), 50, 1));
+            clouds.push(new Cloud(128 * i, -150, 1));
+            clouds.push(new Cloud(1024 - (128 * i), -350, 1));
+            clouds.push(new Cloud(128 * i, -550, 1));
         }
 
 
@@ -257,7 +273,10 @@
 
             ctx.drawImage(imgForeground, 0, 0, 1024, 768);
 
-            $("#djScore").html(Math.floor(CAMy));
+            $("#djScore").html(Math.floor(CAMy*-1));
+
+            $("#djHealth").html(Math.floor(player.health));
+
 
         };
 

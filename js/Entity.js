@@ -13,6 +13,9 @@ function Entity(x, y) {
     this.sprite = false;
     this.active = true;
     this.anim = [];
+    this.maxhealth = 100;
+    this.health = this.maxhealth;
+    this.nextDmg = 0;
 
 }
 
@@ -37,12 +40,19 @@ Entity.prototype.draw = function (offx, offy) {
     ctx.restore();
 };
 
+Entity.prototype.takeDmg = function (amount) {
+
+    if (this.nextDmg < $.now()) {
+        this.health -= amount;
+        this.nextDmg = $.now() + 400;
+    }
+}
 
 
 function Player(x, y) {
 
     Entity.call(this, x, y);
-    this.image = imgDiablo;
+    this.sprite = sprDiabloIdle;
     this.glide = false;
     this.width = 128;
     this.height = 128;
@@ -52,6 +62,9 @@ function Player(x, y) {
     this.powerUp = 0;
     this.powerUpTime = $.now();
     this.jumpPower = 10;
+    this.maxhealth = 100;
+    this.health = this.maxhealth;
+
 
 }
 
@@ -74,6 +87,28 @@ Player.prototype.update = function () {
         this.gravity -= 0.1;
     }
 
+    //ANIMATIONS
+
+    if (this.gravity < 0 && this.jump) {
+        this.sprite = sprDiabloFall;
+    }
+    if (this.gravity > 0 && this.jump) {
+        this.sprite = sprDiabloJump;
+    }
+
+    if (this.glide) {
+        this.sprite = sprDiabloGlide;
+    }
+
+    if (this.jump && this.powerUp && this.gravity > 0) {
+        this.sprite = sprDiabloPowerup;
+    }
+
+    if (!this.jump) {
+        this.sprite = sprDiabloIdle;
+    }
+
+
     /* if (this.position.y - CAMy > 768) {
          this.jump = false;
          this.gravity = 0;
@@ -83,7 +118,7 @@ Player.prototype.update = function () {
     // CAMx = (this.position.x + this.image.width / 2) - SCREEN_W / 2;
     CAMx = 0;
     if (this.position.y < CAMy + 319) {
-        CAMy = (this.position.y + this.image.height / 2) - SCREEN_H / 2;
+        CAMy = (this.position.y + this.height / 2) - SCREEN_H / 2;
     }
 
     for (var i in clouds) {
@@ -138,10 +173,10 @@ Player.prototype.update = function () {
 
         var i = getRnd(0, clouds.length-1);
         var x = getRnd(clouds[i].position.x, clouds[i].position.x + 128);
-        var y = clouds[i].position.y - 32;
+        var y = CAMy-100;
         powerups.push(new PowerUp(x, y));
 
-        nextPowerUp -= getRnd(1024, 3000);
+        nextPowerUp -= getRnd(1024, 4000);
 
     }
 
@@ -217,6 +252,8 @@ Player.prototype.update = function () {
             default: //SCATTER
                 for (var i = 0; i < 12; i++) {
                     var temp = getRnd(200, 800);
+                    var soul = getRnd(0, 100);
+                    
                     clouds.push(new Cloud(temp + (128 * (Math.sin(i / 0.01))), nextSegment - (i * 128), 1));
                 }
                 nextSegment -= 12 * 128;

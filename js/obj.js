@@ -29,7 +29,6 @@ Cloud.prototype.update = function () {
 function Angel(x, y, speed) {
 
     Entity.call(this, x, y);
-   // this.image = imgAngel;
     this.sprite = sprAngel;
     this.offsetY = y;
     this.speed = speed;
@@ -52,6 +51,12 @@ Angel.prototype.update = function () {
 
     this.position = new Vec2(X, Y);
 
+
+    if (recsOverlap(this.position.x, this.position.y, this.width, this.height,
+           player.position.x + 40, player.position.y + 70, 40, 58)) {
+        player.takeDmg(10);
+    }
+
     if (this.position.x > 1150 || this.position.x < -100) {
         this.active = false;
     }
@@ -63,6 +68,8 @@ function PowerUp(x, y) {
     this.image = imgPowerup;
     this.width = 32;
     this.height = 32;
+    this.static = false;
+
 }
 
 PowerUp.prototype = new Entity();
@@ -71,10 +78,54 @@ PowerUp.prototype.constructor = PowerUp;
 
 PowerUp.prototype.update = function () {
 
+
+
+    if (!this.static) {
+        this.gravity -= 0.1;
+        this.position = new Vec2(this.position.x, this.position.y - this.gravity);
+    }
+
+    for (var i in clouds) {
+
+        if (recsOverlap(this.position.x, this.position.y, this.width, this.height,
+                clouds[i].position.x, clouds[i].position.y, clouds[i].width, clouds[i].height)) {
+
+            this.position.y = clouds[i].position.y - 32;
+            this.static = true;
+        }
+    }
+
     if (recsOverlap(this.position.x, this.position.y, this.width, this.height,
            player.position.x + 40, player.position.y + 70, 40, 58)) {
         this.active = false;
         player.powerUp = 1;
         player.powerUpTime = $.now() + 15000;
     }
+
+    if (this.position.y > CAMy + 1000) {
+
+        this.active = false;
+    }
+}
+
+
+
+function Soul(x, y) {
+
+    Entity.call(this, x, y);
+    this.image = imgSoul;
+    this.width = 64;
+    this.height = 128;
+    this.static = false;
+
+}
+
+
+Soul.prototype = new Entity();
+Soul.prototype.constructor = Soul;
+
+
+Soul.prototype.update = function () {
+
+  
 }
